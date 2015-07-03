@@ -11,10 +11,10 @@ import java.util.List;
 
 public class CSVParser {
 
-    private final byte COMMA = 44;
-    private final byte W_QUOTATION_MARK = 34;
-    private final byte CR = 13;
-    private final byte LF = 10;
+    private final byte COMMA = 0x2C;
+    private final byte W_QUOTATION_MARK = 0x22;
+    private final byte CR = 0x0D;
+    private final byte LF = 0x0A;
 
     private String codeSet = "UTF-8";
     // 524288 byte = 512 MB
