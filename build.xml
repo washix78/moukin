@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="jp.moukin" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
-    
+<project name="jp.moukin" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant"
+         default="all">
+
     <target name="resolve">
         <ivy:retrieve />
     </target>
+
+    <target name="all" depends="compile, test" description="build for rerease" />
 
     <target name="compile">
         <delete dir="./work" />
@@ -21,7 +24,7 @@
             </classpath>
         </javac>
     </target>
-    
+
     <target name="dist" depends="compile">
         <delete dir="./dist" />
         <mkdir dir="./dist" />
