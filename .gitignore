@@ -5,6 +5,5 @@
 /.settings
 .classpath
 .project
-.gitignore
-TEST-jp*
+TEST-jp.*
 
