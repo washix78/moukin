@@ -16,24 +16,24 @@ public class CSVParser2 {
 		Nil, QUOT_DATA, QUOT_DATA_END, NON_QUOT_DATA, CR_SEEK
 	}
 
-	private final InputStreamReader input_reader;
-
-	public CSVParser2(File file, String charset) throws UnsupportedEncodingException, FileNotFoundException {
-		FileInputStream file_in = new FileInputStream(file);
-		input_reader = new InputStreamReader(new BufferedInputStream(file_in), charset);
-
-	}
-
+	private final File file;
+	
+	private final String charset;
+	
+	private InputStreamReader input_reader;
+	
 	private StringBuilder str = new StringBuilder();
 
 	private List<String> record = new ArrayList<>();
 
-	String delimiter = "\r\n";
-
 	private Mode mode = Mode.Nil;
 
-	private int addStr(char[] cbuf, int l) {
-
+	public CSVParser2(File file, String charset) {
+		this.file = file;
+		this.charset = charset;
+	}
+	
+	private void addStr(char[] cbuf, int l) {
 		for (int index = 0; index < l; index++) {
 
 			if (mode == Mode.Nil) {
@@ -85,14 +85,18 @@ public class CSVParser2 {
 
 			str.append(cbuf[index]);
 		}
-
-		return 0;
 	}
 
 	private boolean isNoQuotMode() {
 		return mode == Mode.QUOT_DATA_END || mode == Mode.NON_QUOT_DATA;
 	}
-
+	
+	private RecordFunction func = record -> {
+		for (String column : record)
+			System.out.print("'" + column + "'");
+		System.out.println(" _ " + record.size());
+	};
+	
 	private void flush() {
 		if (mode == Mode.Nil)
 			return;
@@ -102,13 +106,10 @@ public class CSVParser2 {
 		str = new StringBuilder();
 	}
 
-	private RecordFunction func = record -> {
-		for (String column : record)
-			System.out.print("'" + column + "'");
-		System.out.println(" _ " + record.size());
-	};
-
 	public void parse(RecordFunction func) throws IOException {
+		FileInputStream file_in = new FileInputStream(file);
+		input_reader = new InputStreamReader(new BufferedInputStream(file_in), charset);
+
 		this.func = func;
 		int size = 65535;
 		char[] cbuf = new char[size];
