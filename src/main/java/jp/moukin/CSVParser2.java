@@ -143,6 +143,7 @@ public class CSVParser2 {
 		func.func(record);
 		mode = Mode.START;
 		str = new StringBuilder();
+		record = new ArrayList<>();
 	}
 
 	/**
