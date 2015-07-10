@@ -1,11 +1,12 @@
 package jp.moukin;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.After;
@@ -67,7 +68,7 @@ public class CSVParser2Test {
 				sb.append("size:").append(record.size()).append("\r\n");
 			}
 		});
-		
+
 		System.out.println(sb.length());
 	}
 
@@ -96,6 +97,52 @@ public class CSVParser2Test {
 			}
 		});
 		out.close();
+	}
+
+	private final String[][] VALUES = { //
+			{ "1", "2", "3" }, //
+			{ "", "", "" }, //
+			{ "a", "b", "c" }, //
+			{ "", "", "" }, //
+			{ "\"Hello, world!\"", "This is \"test\" file.", "\"A,B,C\",\"D,E,F\"" }, //
+			{ "This\nis\ntest.", "\"A\"\n\"B\"\n\"C\"", "\"a\",\n\"b\",\n\"c\"" }, //
+			{ "あああ", "いいい", "ううう" } //
+	};
+
+	@Test
+	public void totalTestBufSizeDefault() throws Exception {
+		CSVParser2 parser = new CSVParser2(getFile("test.csv"), "Shift_JIS");
+		compairReadResult(parser);
+	}
+
+	@Test
+	public void totalTestBufSize() throws Exception {
+		CSVParser2 parser = new CSVParser2(getFile("test.csv"), "Shift_JIS");
+		
+		for (int bufsize = 1; bufsize < 20; bufsize++) {
+			parser.setReadBufSize(bufsize);
+			compairReadResult(parser);
+		}
+	}
+
+	private void compairReadResult(CSVParser2 parser) throws IOException {
+		List<List<String>> records = new ArrayList<>();
+
+		parser.parse(new RecordFunction() {
+			@Override
+			public void func(List<String> record) {
+				records.add(record);
+			}
+		});
+
+		assertEquals(records.size(), 7);
+		for (int i = 0; i != VALUES.length; i++) {
+			String[] values = VALUES[i];
+			List<String> columns = records.get(i);
+			for (int j = 0; j != values.length; j++) {
+				assertEquals(values[j], columns.get(j));
+			}
+		}
 	}
 
 }
