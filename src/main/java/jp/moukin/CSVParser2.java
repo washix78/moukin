@@ -3,10 +3,8 @@ package jp.moukin;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +15,7 @@ public class CSVParser2 {
 	private final String charset;
 
 	/**
-	 * RFC4180 CSVに従ったCSVのパースを行います。<br>
+	 * RFC4180 に従ったCSVのパースを行います。<br>
 	 * ただしヘッダーの有無、レコード内のカラム数が異なるなどは無視します。<br>
 	 * フォーマットに従わない場合などのエラー検知は不十分です。
 	 * 
