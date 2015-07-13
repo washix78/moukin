@@ -31,7 +31,7 @@ public class CSVParser2 {
 
 	private int read_buf_size = 65535;
 
-	private StringBuilder str = new StringBuilder();
+	private StringBuilder column_data = new StringBuilder();
 
 	private List<String> record = new ArrayList<>();
 
@@ -51,50 +51,70 @@ public class CSVParser2 {
 	}
 
 	private Mode readOneCHAR(char c, Mode mode) {
-		if (mode == Mode.START) {
+
+		switch (mode) {
+		case START:
 			if (c == '\"') {
+				// 最初の文字がダブルコート
 				return Mode.QUOT_DATA;
 			} else {
+				// ダブルコート無しのデータ
 				mode = Mode.NON_QUOT_DATA;
+				return procNonQuotChar(c, mode);
 			}
-		}
-		
-		if (isNotEscapeMode(mode) && (c == '\r')) {
-			return Mode.CR_;
-
-		} else if (mode == Mode.CR_) {
+		case CR_:
 			if (c == '\n') {
-				// 改行（レコード区切り）
-				record.add(str.toString());
+				// 改行確定（レコード区切り）
+				record.add(column_data.toString());
 				func.func(record);
 				record = new ArrayList<>();
-				str = new StringBuilder();
+				column_data = new StringBuilder();
 				return Mode.START;
 			} else {
 				throw new Error("改行コード不正");
 			}
 
-		} else if (isNotEscapeMode(mode) && c == ',') {
-			// カラム区切り
-			record.add(str.toString());
-			str = new StringBuilder();
-			return Mode.START;
+		case QUOT_DATA: // ダブルコート内
+			if (c == '\"') {
+				// ダブルコート内でダブルコートがあった
+				return Mode.QUOT_DATA_END;
+			}
+			return procDataChar(c, mode);
 
-		} else if (mode == Mode.QUOT_DATA && c == '\"') {
-			return Mode.QUOT_DATA_END;
+		case QUOT_DATA_END:
+			if (c == '\"') {
+				// ダブルコートが２つ続いた
+				column_data.append('\"');
+				return Mode.QUOT_DATA;
+			}
+			return procNonQuotChar(c, mode);
 
-		} else if (mode == Mode.QUOT_DATA_END && c == '\"') {
-			str.append('\"');
-			return Mode.QUOT_DATA;
+		case NON_QUOT_DATA:
+			return procNonQuotChar(c, mode);
 
+		default:
+			throw new Error();
 		}
-
-		str.append(c);
-		return mode;
 	}
 
-	private boolean isNotEscapeMode(Mode mode) {
-		return mode == Mode.QUOT_DATA_END || mode == Mode.NON_QUOT_DATA;
+	private Mode procNonQuotChar(char c, Mode mode) {
+		if (c == '\r') {
+			// 改行コードの始まり
+			return Mode.CR_;
+		} else if (c == ',') {
+			// カラム区切り確定
+			record.add(column_data.toString());
+			column_data = new StringBuilder();
+			return Mode.START;
+		} else {
+			column_data.append(c);
+			return mode;
+		}
+	}
+
+	private Mode procDataChar(char c, Mode mode) {
+		column_data.append(c);
+		return mode;
 	}
 
 	private RecordFunction func = record -> {
@@ -122,10 +142,10 @@ public class CSVParser2 {
 				InputStreamReader input_reader = new InputStreamReader(bufed_in, charset);) {
 
 			this.func = func;
-			final char[] cbuf = new char[read_buf_size];			
+			final char[] cbuf = new char[read_buf_size];
 			int count = 0;
 			Mode mode = Mode.START;
-			
+
 			while ((count = input_reader.read(cbuf, 0, read_buf_size)) != -1) {
 				mode = addStr(cbuf, count, mode);
 			}
@@ -137,10 +157,10 @@ public class CSVParser2 {
 	private void flush(Mode mode) {
 		if (mode == Mode.START)
 			return;
-		record.add(str.toString());
+		record.add(column_data.toString());
 		func.func(record);
 		mode = Mode.START;
-		str = new StringBuilder();
+		column_data = new StringBuilder();
 		record = new ArrayList<>();
 	}
 

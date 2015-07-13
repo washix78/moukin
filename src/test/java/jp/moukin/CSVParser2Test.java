@@ -118,7 +118,7 @@ public class CSVParser2Test {
 	@Test
 	public void totalTestBufSize() throws Exception {
 		CSVParser2 parser = new CSVParser2(getFile("test.csv"), "Shift_JIS");
-		
+
 		for (int bufsize = 1; bufsize < 20; bufsize++) {
 			parser.setReadBufSize(bufsize);
 			compairReadResult(parser);
@@ -128,11 +128,8 @@ public class CSVParser2Test {
 	private void compairReadResult(CSVParser2 parser) throws IOException {
 		List<List<String>> records = new ArrayList<>();
 
-		parser.parse(new RecordFunction() {
-			@Override
-			public void func(List<String> record) {
-				records.add(record);
-			}
+		parser.parse(record -> {
+			records.add(record);
 		});
 
 		assertEquals(records.size(), 7);
