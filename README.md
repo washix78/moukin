@@ -15,12 +15,14 @@ test.csv:
 """h""","i","j"
 "k
   l","m","n"</pre>
+  
 code:
 <pre>CSVParser2 parser = new CSVParser2(new File("c:\\work\\test.csv"), "Shift_JIS");
 
 parser.parse(record -> {
 	System.out.println(record);
 });</pre>
+
 result:
 <pre>[a, b, c]
 [d,e, f, g]   ("d,e" is one string)
