@@ -51,7 +51,6 @@ public class CSVParser2 {
 	}
 
 	private Mode readOneCHAR(char c, Mode mode) {
-
 		switch (mode) {
 		case START:
 			if (c == '\"') {
