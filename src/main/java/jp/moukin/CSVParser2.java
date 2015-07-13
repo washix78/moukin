@@ -61,6 +61,7 @@ public class CSVParser2 {
 				mode = Mode.NON_QUOT_DATA;
 				return procNonQuotChar(c, mode);
 			}
+			
 		case CR_:
 			if (c == '\n') {
 				// 改行確定（レコード区切り）
@@ -164,11 +165,13 @@ public class CSVParser2 {
 	}
 
 	/**
-	 * 何文字ずつ読込むかを設定します。
+	 * 何文字ずつ読込むかを設定します。 （最大32MB）
 	 * 
 	 * @param read_buf_size
 	 */
 	public void setReadBufSize(int read_buf_size) {
+		if (read_buf_size < 1 || read_buf_size > 1024 * 1024 * 32)
+			throw new IllegalArgumentException();
 		this.read_buf_size = read_buf_size;
 	}
 }

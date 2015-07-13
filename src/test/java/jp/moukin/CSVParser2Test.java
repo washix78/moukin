@@ -116,6 +116,35 @@ public class CSVParser2Test {
 	}
 
 	@Test
+	public void totalTestBufSizeMaximum() throws Exception {
+		CSVParser2 parser = new CSVParser2(getFile("test.csv"), "Shift_JIS");
+		parser.setReadBufSize(32 * 1024 * 1024);
+		compairReadResult(parser);
+	}
+
+	@Test
+	public void bufsize_minus() throws Exception {
+		CSVParser2 parser = new CSVParser2(getFile("test.csv"), "Shift_JIS");
+		try {
+			parser.setReadBufSize(0);
+			fail("buf size setted zero");
+		} catch (IllegalArgumentException e) {
+
+		}
+	}
+
+	@Test
+	public void bufsize_over() throws Exception {
+		CSVParser2 parser = new CSVParser2(getFile("test.csv"), "Shift_JIS");
+		try {
+			parser.setReadBufSize(32 * 1024 * 1024 + 1);
+			fail("buf size setted 32MB + 1byte");
+		} catch (IllegalArgumentException e) {
+
+		}
+	}
+
+	@Test
 	public void totalTestBufSize() throws Exception {
 		CSVParser2 parser = new CSVParser2(getFile("test.csv"), "Shift_JIS");
 
