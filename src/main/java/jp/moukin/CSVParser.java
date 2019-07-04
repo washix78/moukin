@@ -88,7 +88,7 @@ public class CSVParser {
         List<String> list = new ArrayList<>();
         for (int i = 0, wqmCount = 0, startI = 0; i <= length; i++) {
             if (i == length || (line[i] == COMMA && wqmCount % 2 == 0)) {
-                String column = new String(line, startI, i - startI, codeSet);
+                String column = new String(new String(line, startI, i - startI, codeSet));
                 list.add(column);
                 startI = i + 1;
                 wqmCount = 0;
