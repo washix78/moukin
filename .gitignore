@@ -1,1 +1,8 @@
-/build
+/bin
+/dist
+/.git
+/.settings
+.classpath
+.project
+.gitignore
+

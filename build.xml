@@ -1,6 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="jp.moukin" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
-	<target name="resolve">
+
+    <target name="dist">
+        <delete dir="./dist" />
+        <delete dir="./work" />
+        <mkdir dir="./dist" />
+        <mkdir dir="./work/classes" />
+        <javac destdir="./work/classes" includeantruntime="false">
+            <src path="./src/main/java" />
+        </javac>
+        <jar jarfile="./dist/moukin.jar" basedir="./work/classes" />
+        <delete dir="./work" />
+    </target>
+
+    <target name="resolve">
 		<ivy:retrieve />
 	</target>
+
 </project>
