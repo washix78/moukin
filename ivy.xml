@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ivy-module>
+    <info organisation="jp.moukin" />
+    <dependencies>
+        <dependency org="" rev="" />
+    </dependencies>
+</ivy-module>
